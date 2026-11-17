@@ -832,7 +832,7 @@ function about(){
     '<span>Wallpaper</span><b>Monterey, dark layers</b></div>'+
     '<div class="actions"><button class="btn primary" id="port">Return to portfolio</button>'+
     '<button class="btn" id="find">Open Finder</button></div></div>';
-  w.body.querySelector("#port").addEventListener("click",function(){location.href="leon-vasari.html";});
+  w.body.querySelector("#port").addEventListener("click",function(){location.href="index.html";});
   w.body.querySelector("#find").addEventListener("click",function(){finder("home");});
   return w;
 }
@@ -863,7 +863,7 @@ function toggleStart(force){
     var id=b.getAttribute("data-l"); sm.classList.remove("on");
     if(id==="projects")finder("projects"); else launch(id);
   });});
-  sm.querySelector("#smret").addEventListener("click",function(){location.href="leon-vasari.html";});
+  sm.querySelector("#smret").addEventListener("click",function(){location.href="index.html";});
   search.focus();
 }
 function trashWin(){
@@ -961,7 +961,7 @@ document.addEventListener("keydown",function(e){
     if(ctx.classList.contains("on")){ctx.classList.remove("on");return;}
     if(document.body.classList.contains("locked")) return;
     if(document.activeElement&&document.activeElement.tagName==="INPUT"){document.activeElement.blur();return;}
-    location.href="leon-vasari.html";
+    location.href="index.html";
   }
 });
 window.addEventListener("resize",renderDesktop);
