@@ -1013,5 +1013,16 @@ if(/[?&]skip=1/.test(location.search)){
 } else bootSequence();
 })();
 </script>
-</body>
+<script data-anti-inspect>
+(function(){
+  var ok=function(el){return !!(el&&(el.closest('.desktop')||el.closest('.ctx')||el.closest('.startmenu')||el.closest('input,textarea')));};
+  document.addEventListener('contextmenu',function(e){if(!ok(e.target))e.preventDefault();});
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1)||(e.ctrlKey&&k==='u'))e.preventDefault();
+  });
+  document.addEventListener('selectstart',function(e){if(!ok(e.target))e.preventDefault();});
+  document.addEventListener('dragstart',function(e){if(!ok(e.target))e.preventDefault();});
+})();
+</script></body>
 </html>

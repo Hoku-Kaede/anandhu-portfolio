@@ -1373,7 +1373,7 @@ function GridMotion(root,plane,opts){
 (function(){
   var loader=document.getElementById("loader");
   if(!loader) return;
-  if(new URLSearchParams(location.search).get("noload")||reduce){
+  if(sessionStorage.getItem("anandhu-returning")==="1"||reduce){ try{sessionStorage.removeItem("anandhu-returning");}catch(e){}
     loader.classList.add("done");loader.style.display="none";return;
   }
   var gm=GridMotion(document.getElementById("grid-motion"),document.getElementById("gm-plane"),{
@@ -1616,7 +1616,7 @@ function fillDetail(f){
   $function("#dsyn").textContent=f.synopsis;
   var extra=$function("#dextra"), btn=$function("#dwatch");
   extra.hidden=true;
-  btn.href="project.html?id="+encodeURIComponent(f.id);
+  btn.href="project.html#"+encodeURIComponent(f.id);
   var src=$function("#dsrc");
   src.hidden=!f.github;
   if(f.github) src.href=f.github;
@@ -1778,6 +1778,7 @@ $function("#next").addEventListener("click",function(){T=Math.round(T)+1;});
 play.addEventListener("click",openDetail);
 $function("#dclose").addEventListener("click",closeDetail);
 $function("#dwatch").addEventListener("click",function(e){
+  try{sessionStorage.setItem("anandhu-returning","1");}catch(err){}
   if(reduce) return;
   var href=this.href;
   e.preventDefault();
@@ -2056,5 +2057,16 @@ mx=cx=W/2; my=cy=cyShelf;
 requestAnimationFrame(frame);
 })();
 </script>
-</body>
+<script data-anti-inspect>
+(function(){
+  var ok=function(el){return !!(el&&(el.closest('.desktop')||el.closest('.ctx')||el.closest('.startmenu')||el.closest('input,textarea')));};
+  document.addEventListener('contextmenu',function(e){if(!ok(e.target))e.preventDefault();});
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1)||(e.ctrlKey&&k==='u'))e.preventDefault();
+  });
+  document.addEventListener('selectstart',function(e){if(!ok(e.target))e.preventDefault();});
+  document.addEventListener('dragstart',function(e){if(!ok(e.target))e.preventDefault();});
+})();
+</script></body>
 </html>
