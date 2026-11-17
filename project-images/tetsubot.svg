@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="474" height="900" viewBox="0 0 474 900">
+  <rect width="474" height="900" fill="#141414"/>
+  <circle cx="237" cy="392" r="150" fill="none" stroke="#1F3FB0" stroke-width="2"/>
+  <circle cx="237" cy="392" r="118" fill="none" stroke="#1F3FB0" stroke-width="1" opacity=".55"/>
+  <circle cx="237" cy="392" r="86" fill="none" stroke="#EDEBE6" stroke-width="1" opacity=".3"/>
+  <path d="M237 250 V534 M95 392 H379" stroke="#1F3FB0" stroke-width="1" opacity=".45"/>
+  <text x="40" y="80" fill="#EDEBE6" font-family="Arial,Helvetica,sans-serif" font-size="15" letter-spacing="4">ANANDHU / PROJECT 06</text>
+  <text x="40" y="690" fill="#EDEBE6" font-family="Arial,Helvetica,sans-serif" font-size="56" font-weight="bold" letter-spacing="-2">TETSU</text>
+  <text x="40" y="750" fill="#EDEBE6" font-family="Arial,Helvetica,sans-serif" font-size="56" font-weight="bold" letter-spacing="-2">BOT</text>
+  <text x="42" y="795" fill="#1F3FB0" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="5">BOT / AUTOMATION</text>
+  <rect x="40" y="846" width="394" height="1" fill="#EDEBE6" opacity=".5"/>
+  <text x="40" y="875" fill="#EDEBE6" font-family="Arial,Helvetica,sans-serif" font-size="13" letter-spacing="3">SELECTED WORK / 2026</text>
+</svg>
