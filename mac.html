@@ -54,7 +54,7 @@ button,input,textarea{font:inherit;color:inherit}
   background:linear-gradient(160deg,#6fa8ff,#1f5fd0);
   box-shadow:0 10px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25)}
 .icon.folder .glyph{background:linear-gradient(160deg,#8fc9ff,#3974d8)}
-.icon.secret .glyph img{filter:hue-rotate(96deg) saturate(.7) brightness(.92)}
+.icon.secret .glyph img{filter:none}
 .icon.secret .glyph{background:none!important;box-shadow:none!important}
 .icon.file .glyph{background:linear-gradient(160deg,#eef0f4,#b9bec8);color:#22252b}
 .icon.trash .glyph{background:linear-gradient(160deg,#cfd6de,#8e99a6);color:#222}
@@ -225,8 +225,7 @@ button,input,textarea{font:inherit;color:inherit}
 .sl-card{width:min(360px,88vw);padding:26px;border-radius:18px;text-align:center;
   background:var(--glass-solid);border:1px solid var(--border);
   box-shadow:0 40px 90px rgba(0,0,0,.6),inset 0 1px 0 var(--hi)}
-.sl-card img{width:58px;height:58px;object-fit:contain;margin:0 auto 12px;
-  filter:hue-rotate(96deg) saturate(.7) brightness(.92)}
+.sl-card img{width:58px;height:58px;object-fit:contain;margin:0 auto 12px}
 .sl-card h2{font-size:17px;font-weight:600;margin:0 0 8px}
 .sl-card p{font-size:12px;color:var(--muted);margin:0 0 16px}
 .sl-card input{width:100%;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border);
@@ -294,7 +293,7 @@ button,input,textarea{font:inherit;color:inherit}
 
 <div class="secretlock" id="secretlock">
   <div class="sl-card">
-    <img src="assets/icons/folder.png" alt="">
+    <img src="assets/icons/folder-green.png" alt="">
     <h2>Top Secret</h2>
     <p>What is the fav app i made?</p>
     <input id="slanswer" type="password" placeholder="Answer" aria-label="Answer">
@@ -434,7 +433,8 @@ var APP_ICONS={safari:"safari.svg",notes:"ref-notes.png",calculator:"calculator.
 function ico(file){return '<img class="iconimg" src="assets/icons/'+file+'" alt="">';}
 function isRaw(file){return /\.png$/i.test(file);}
 function iconFile(it){
-  if(it.type==="folder"||it.type==="secret") return "folder.png";
+  if(it.type==="secret") return "folder-green.png";
+  if(it.type==="folder") return "folder.png";
   if(it.type==="file") return "file.svg";
   if(it.type==="trash") return "trash.png";
   return APP_ICONS[it.app]||"apple.svg";
@@ -575,7 +575,7 @@ function finder(path){
     if(p==="apps")data=["safari","notes","calculator","games","terminal","mail","music","settings"].map(function(a){return {n:a+".app",t:"app",a:a};});
     if(p==="projects")data=PROJECTS.map(function(x){return {n:x.title,t:"app",a:"project",id:x.id};});
     if(p==="docs")data=[{n:"Read me.txt",t:"file"},{n:"Notes.txt",t:"file"}];
-    if(p==="secret")data=[{n:"Kato — the answer.txt",t:"file"},{n:"Hidden notes.txt",t:"file"}];
+    if(p==="secret")data=[{n:"flag.txt",t:"file",a:"flag"},{n:"Kato — the answer.txt",t:"file"},{n:"Hidden notes.txt",t:"file"}];
     w.body.innerHTML='<div class="bar"><button id="fback" '+(hist.length?"":"disabled")+'>‹ Back</button>'+
       '<span class="crumb">'+p+'</span></div><div class="cols">'+
       '<div class="side"><b>Favorites</b><button data-go="home">Desktop</button>'+
@@ -887,8 +887,17 @@ function trashWin(){
   }
   render(); return w;
 }
+function flagWin(){
+  if(apps.flag){focusWin(apps.flag);return apps.flag;}
+  var w=makeWin("flag.txt",460,250); apps.flag=w;
+  w.body.innerHTML='<div class="welcome"><p class="kicker">Secret file</p>'+
+    '<h2 style="font-size:26px;font-family:var(--mono)">ctf{1_lik3_y0u}</h2>'+
+    '<p>Found in the hidden folder.</p></div>';
+  return w;
+}
 function launch(id){
   if(id==="finder")return finder("home");
+  if(id==="flag")return flagWin();
   if(id==="safari")return safari();
   if(id==="notes")return notes();
   if(id==="calculator")return calculator();

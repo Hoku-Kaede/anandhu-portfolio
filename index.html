@@ -1904,10 +1904,17 @@ LogoLoop(document.getElementById("contact-loop"),document.getElementById("contac
     var p=document.createElement("p"); p.className="term-out"+(error?" term-error":"");
     p.innerHTML=html; body.appendChild(p); body.scrollTop=body.scrollHeight;
   }
+  var awaitingFlag=false;
   function run(raw){
     var cmd=raw.trim().toLowerCase(); if(!cmd) return;
     line(cmd);
-    if(cmd==="help") out("commands: whoami, skills, projects, contact, clear");
+    if(awaitingFlag){
+      awaitingFlag=false;
+      if(raw.trim()==="ctf{1_lik3_y0u}") out("Access granted — flag accepted.");
+      else out("Incorrect flag.","error");
+    }
+    else if(cmd==="flag"){awaitingFlag=true;out("Enter the flag:");}
+    else if(cmd==="help") out("commands: whoami, skills, projects, contact, flag, clear");
     else if(cmd==="whoami") out("Anandhu — designer and developer. Interfaces, motion and security work.");
     else if(cmd==="skills") out("Interaction design · Three.js · GSAP · React · TypeScript · Python · Kali Linux");
     else if(cmd==="projects") out("10 selected projects in the shelf above. Drag or scroll to browse.");

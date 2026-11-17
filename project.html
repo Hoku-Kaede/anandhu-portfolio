@@ -270,10 +270,13 @@ function StrokeText(el,text,o){
   else build();
 }
 
-var q=location.hash.replace(/^#/,"");
-var i=PROJECTS.findIndex(function(p){return p.id===q;});
-if(i<0)i=0;
-var p=PROJECTS[i], n=PROJECTS.length;
+var prev,next,lb;
+function renderProject(){
+  if(lb) closeLb();
+  var q=location.hash.replace(/^#/,"");
+  var i=PROJECTS.findIndex(function(p){return p.id===q;});
+  if(i<0)i=0;
+  var p=PROJECTS[i], n=PROJECTS.length;
 document.title=p.title+" — Anandhu's Portfolio";
 document.getElementById("pnum").textContent=String(i+1).padStart(2,"0")+" / "+String(n).padStart(2,"0");
 document.getElementById("pcat").textContent=p.category+" / "+p.tag;
@@ -296,7 +299,7 @@ if(p.github) links.push('<a class="visit alt" href="'+p.github+'" target="_blank
 document.getElementById("plink").innerHTML=links.length?links.join(""):'<span class="visit off">No public link for this project</span>';
 var gallery=document.getElementById("gallery");
 var lbShots=p.shots||[], lbIndex=0;
-var lb=document.getElementById("lightbox"), lbimg=document.getElementById("lbimg"), lbcap=document.getElementById("lbcap");
+lb=document.getElementById("lightbox"); var lbimg=document.getElementById("lbimg"), lbcap=document.getElementById("lbcap");
 function showShot(k){
   if(!lbShots.length) return;
   lbIndex=(k+lbShots.length)%lbShots.length;
@@ -305,31 +308,34 @@ function showShot(k){
   lbcap.textContent=p.title+" — "+(lbIndex+1)+" / "+lbShots.length;
 }
 function openLb(k){lb.hidden=false;showShot(k);document.getElementById("lbclose").focus();}
-function closeLb(){lb.hidden=true;lbimg.removeAttribute("src");}
+function closeLb(){if(lb)lb.hidden=true;if(lbimg)lbimg.removeAttribute("src");}
 if(lbShots.length){
   gallery.hidden=false;
   document.getElementById("galgrid").innerHTML=lbShots.map(function(src,k){
     return '<a href="'+src+'" aria-label="Open screenshot '+(k+1)+'"><img src="'+src+'" alt="'+p.title+' screenshot '+(k+1)+'" loading="lazy"></a>';
   }).join("");
   [].forEach.call(document.querySelectorAll("#galgrid a"),function(a,k){
-    a.addEventListener("click",function(e){e.preventDefault();openLb(k);});
+    a.onclick=function(e){e.preventDefault();openLb(k);};
   });
 }else gallery.hidden=true;
-document.getElementById("lbclose").addEventListener("click",closeLb);
-document.getElementById("lbprev").addEventListener("click",function(){showShot(lbIndex-1);});
-document.getElementById("lbnext").addEventListener("click",function(){showShot(lbIndex+1);});
-lb.addEventListener("click",function(e){if(e.target===lb)closeLb();});
-addEventListener("keydown",function(e){
+document.getElementById("lbclose").onclick=closeLb;
+document.getElementById("lbprev").onclick=function(){showShot(lbIndex-1);};
+document.getElementById("lbnext").onclick=function(){showShot(lbIndex+1);};
+lb.onclick=function(e){if(e.target===lb)closeLb();};
+window.onkeydown=function(e){
   if(lb.hidden) return;
   if(e.key==="Escape")closeLb();
   if(e.key==="ArrowLeft")showShot(lbIndex-1);
   if(e.key==="ArrowRight")showShot(lbIndex+1);
-});
+};
 function href(k){return "project.html#"+PROJECTS[(k+n)%n].id;}
-var prev=document.getElementById("prev"), next=document.getElementById("next");
+prev=document.getElementById("prev"); next=document.getElementById("next");
 prev.href=href(i-1); next.href=href(i+1);
 prev.querySelector("span").textContent=PROJECTS[(i-1+n)%n].title;
 next.querySelector("span").textContent=PROJECTS[(i+1)%n].title;
+}
+renderProject();
+addEventListener("hashchange",renderProject);
 
 var btn=document.getElementById("theme"), saved="dark";
 try{saved=localStorage.getItem("portfolio-theme-v2")||"dark";}catch(e){}
