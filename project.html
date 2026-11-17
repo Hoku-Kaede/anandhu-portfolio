@@ -272,6 +272,10 @@ function StrokeText(el,text,o){
 
 var prev,next,lb;
 function renderProject(){
+  if(typeof veil!=="undefined"&&veil){
+    veil.getAnimations().forEach(function(a){a.cancel();});
+    veil.style.clipPath="circle(0px at 50% 50%)";
+  }
   if(lb) closeLb();
   var q=location.hash.replace(/^#/,"");
   var i=PROJECTS.findIndex(function(p){return p.id===q;});
@@ -363,6 +367,7 @@ function enterPage(){
   setTimeout(function(){a.cancel();veil.style.clipPath="circle(0px at 50% 50%)";},560);
 }
 function leaveTo(href,el){
+  if(href.indexOf('#')>-1){location.hash=href.split('#')[1];return;}
   if(lessMotion){location.href=href;return;}
   var r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};
   var x=r.left+r.width/2, y=r.top+r.height/2;
