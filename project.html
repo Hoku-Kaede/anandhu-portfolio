@@ -30,6 +30,18 @@ body.dark{
 html,body{margin:0;padding:0;min-height:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;transition:background .4s var(--ease),color .4s var(--ease)}
 #page-veil{position:fixed;inset:0;z-index:200;pointer-events:none;background:var(--paper);clip-path:circle(0 at 50% 50%)}
+.switch-wipe{position:fixed;inset:0;z-index:190;pointer-events:none;background:var(--paper);
+  clip-path:inset(0 100% 0 0)}
+.switch-wipe.run{animation:wipeAcross .56s var(--ease) both}
+@keyframes wipeAcross{
+  0%{clip-path:inset(0 100% 0 0)}
+  46%{clip-path:inset(0 0 0 0)}
+  100%{clip-path:inset(0 0 0 100%)}
+}
+main.switch-out{animation:projOut .22s var(--ease) both}
+main.switch-in{animation:projIn .42s var(--ease) both}
+@keyframes projOut{to{transform:scale(.985) translateY(8px);clip-path:inset(0 0 10% 0 round 18px)}}
+@keyframes projIn{from{transform:scale(.985) translateY(8px);clip-path:inset(0 0 10% 0 round 18px)}to{transform:none;clip-path:inset(0 0 0 0 round 0)}}
 
 header{position:fixed;left:0;right:0;top:0;height:76px;padding:0 32px;z-index:50;
   display:flex;align-items:center;justify-content:space-between;
@@ -120,6 +132,7 @@ li b{font-family:var(--mono);font-size:11px;color:var(--cobalt)}
 </head>
 <body class="dark">
 <div id="page-veil" aria-hidden="true"></div>
+<div class="switch-wipe" id="switch-wipe" aria-hidden="true"></div>
 <header>
   <a href="index.html">← Index</a>
   <span class="idx" id="pnum"></span>
@@ -276,6 +289,8 @@ function renderProject(){
     veil.getAnimations().forEach(function(a){a.cancel();});
     veil.style.clipPath="circle(0px at 50% 50%)";
   }
+  var main=document.querySelector("main");
+  if(main) main.classList.remove("switch-out");
   if(lb) closeLb();
   var q=location.hash.replace(/^#/,"");
   var i=PROJECTS.findIndex(function(p){return p.id===q;});
@@ -367,7 +382,20 @@ function enterPage(){
   setTimeout(function(){a.cancel();veil.style.clipPath="circle(0px at 50% 50%)";},560);
 }
 function leaveTo(href,el){
-  if(href.indexOf('#')>-1){location.hash=href.split('#')[1];return;}
+  if(href.indexOf('#')>-1){
+    var main=document.querySelector("main"), wipe=document.getElementById("switch-wipe");
+    var target=href.split('#')[1];
+    if(lessMotion||!wipe){location.hash=target;return;}
+    wipe.classList.remove("run"); void wipe.offsetWidth; wipe.classList.add("run");
+    if(main){main.classList.remove("switch-in");main.classList.add("switch-out");}
+    setTimeout(function(){location.hash=target;},250);
+    setTimeout(function(){
+      wipe.classList.remove("run");
+      if(main){main.classList.remove("switch-out");main.classList.add("switch-in");}
+      setTimeout(function(){if(main)main.classList.remove("switch-in");},440);
+    },600);
+    return;
+  }
   if(lessMotion){location.href=href;return;}
   var r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};
   var x=r.left+r.width/2, y=r.top+r.height/2;
