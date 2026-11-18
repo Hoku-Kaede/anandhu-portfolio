@@ -1415,6 +1415,8 @@ var s=N,T=N,hover=-1,active=0;
 var mx=0,my=0,cx=0,cy=0,tiltX=0,tiltY=0,onCover=false,isOpen=false;
 var drag=false,moved=false,dragX=0,T0=0,suppressClick=false,overBtn=false;
 var wheelTimer=null,last=performance.now(),inkStart=0;
+var lastInput=0;
+function markInput(){lastInput=performance.now();}
 var tapes=[];
 
 PROJECTS.forEach(function(p){var im=new Image();im.src=p.image;});
@@ -1451,7 +1453,7 @@ function build(){
         if(suppressClick){suppressClick=false;return;}
         var r=rel(v);
         if(Math.abs(r)<.5){openDetail();}
-        else{T=Math.round(T+r);}
+        else{markInput();T=Math.round(T+r);}
       });
       stage.appendChild(t);
       tapes.push({el:t,sp:sp,cv:cv,v:v,lift:0});
@@ -1751,10 +1753,12 @@ window.addEventListener("pointerup",function(){
 });
 shelf.addEventListener("pointerdown",function(e){
   if(isOpen) return;
+  markInput();
   drag=true;moved=false;dragX=e.clientX;T0=T;
 });
 shelf.addEventListener("wheel",function(e){
   if(isOpen) return;
+  markInput();
   e.preventDefault();
   var delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
   T+=delta/(ws+gap)*.5;
@@ -1769,12 +1773,12 @@ window.addEventListener("keydown",function(e){
   if(konamiKey(e.key)){konamiIdx++;if(konamiIdx===10){konamiIdx=0;unlockMac();}return;}
   konamiIdx=0;
   if(isOpen) return;
-  if(e.key==="ArrowRight"){T=Math.round(T)+1;e.preventDefault();}
-  else if(e.key==="ArrowLeft"){T=Math.round(T)-1;e.preventDefault();}
+  if(e.key==="ArrowRight"){markInput();T=Math.round(T)+1;e.preventDefault();}
+  else if(e.key==="ArrowLeft"){markInput();T=Math.round(T)-1;e.preventDefault();}
   else if(e.key==="Enter"&&document.activeElement===document.body){openDetail();e.preventDefault();}
 });
-$function("#prev").addEventListener("click",function(){T=Math.round(T)-1;});
-$function("#next").addEventListener("click",function(){T=Math.round(T)+1;});
+$function("#prev").addEventListener("click",function(){markInput();T=Math.round(T)-1;});
+$function("#next").addEventListener("click",function(){markInput();T=Math.round(T)+1;});
 play.addEventListener("click",openDetail);
 $function("#dclose").addEventListener("click",closeDetail);
 $function("#dwatch").addEventListener("click",function(e){
@@ -1802,7 +1806,7 @@ tabs.forEach(function(tab){
     }
     var curIdx=((Math.round(T)%N)+N)%N;
     var diff=((idx-curIdx+N/2)%N+N)%N-N/2;
-    T=Math.round(T)+diff;
+    markInput();T=Math.round(T)+diff;
   });
 });
 document.querySelectorAll("button,a").forEach(function(el){
@@ -2056,6 +2060,13 @@ function unlockMac(){
     {duration:reduce?1:900,easing:"cubic-bezier(.2,.8,.2,1)",fill:"both"});
   setTimeout(function(){location.href="mac.html";},reduce?50:920);
 }
+/* advance one tape every three seconds; pause briefly after interaction */
+setInterval(function(){
+  if(isOpen||drag) return;
+  if(performance.now()-lastInput<3000) return;
+  T=Math.round(T)+1;
+},3000);
+
 /* ---------------- go ---------------- */
 measure();
 build();
