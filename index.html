@@ -1914,7 +1914,10 @@ LogoLoop(document.getElementById("contact-loop"),document.getElementById("contac
     line(cmd);
     if(awaitingFlag){
       awaitingFlag=false;
-      if(raw.trim()==="ctf{1_lik3_y0u}") out("Access granted — flag accepted.");
+      if(raw.trim()==="ctf{1_lik3_y0u}"){
+        out("Access granted — flag accepted.");
+        setTimeout(function(){location.href="https://youtu.be/pxz6afpBVbM";},1000);
+      }
       else out("Incorrect flag.","error");
     }
     else if(cmd==="flag"){awaitingFlag=true;out("Enter the flag:");}
