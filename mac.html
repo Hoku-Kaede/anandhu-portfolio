@@ -329,16 +329,16 @@ var wins=[], apps={}, z=20, seq=0, selected=null, dragIcon=null;
 var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var KEY="anandhu-mac-desktop", ITEMS_KEY="anandhu-mac-items", TRASH_KEY="anandhu-mac-trash";
 var PROJECTS=[
-  {title:"Proofline",category:"WEB",year:2026},
-  {title:"Subtrack",category:"TOOL",year:2026},
-  {title:"RVC Voice Studio",category:"TOOL",year:2026},
-  {title:"Speak Translate",category:"TOOL",year:2026},
-  {title:"Aquarium",category:"EXPERIMENT",year:2026},
-  {title:"BeerusUI",category:"WEB",year:2026},
-  {title:"TetsuBot",category:"APP",year:2026},
-  {title:"Kato Desktop",category:"APP",year:2026},
-  {title:"Drink Kato Drink",category:"APP",year:2026},
-  {title:"Sherlock GUI",category:"TOOL",year:2026}
+  {id:"proofline",title:"Proofline",category:"WEB",year:2026,image:"proofline/public/logo.png"},
+  {id:"subtrack",title:"Subtrack",category:"TOOL",year:2026,image:"subtrack-site/public/subtrack-s-logo-512.png"},
+  {id:"rvc",title:"RVC Voice Studio",category:"TOOL",year:2026,image:"rvc-voice-studio/assets/icon.png"},
+  {id:"speak",title:"Speak Translate",category:"TOOL",year:2026,image:"voice-translate/react-app/src/assets/hero.png"},
+  {id:"aquarium",title:"Aquarium",category:"EXPERIMENT",year:2026,image:"project-images/kyoko-cover.png"},
+  {id:"beerusui",title:"BeerusUI",category:"WEB",year:2026,image:"project-images/beerus-cover.jpg"},
+  {id:"tetsubot",title:"TetsuBot",category:"APP",year:2026,image:"project-images/tetsu-bot.png"},
+  {id:"kato",title:"Drink Kato Drink",category:"APP",year:2026,image:"project-images/kato-icon.png"},
+  {id:"sho",title:"Kato Desktop",category:"APP",year:2026,image:"project-images/mao-mao.jpg"},
+  {id:"sherlock",title:"Sherlock GUI",category:"TOOL",year:2026,image:"project-images/sherlock.svg"}
 ];
 
 function clock(){
@@ -430,7 +430,8 @@ function makeWin(title,w,h,onClose){
 var APP_ICONS={safari:"safari.svg",notes:"ref-notes.png",calculator:"calculator.png",games:"games.png",
   terminal:"terminal.png",mail:"mail.svg",music:"music.svg",settings:"ref-settings.png",
   about:"apple.svg",finder:"ref-finder.png",projects:"folder.png",launchpad:"ref-launchpad.png"};
-function ico(file){return '<img class="iconimg" src="assets/icons/'+file+'" alt="">';}
+function ico(file){var src=file.indexOf('/')>-1?file:'assets/icons/'+file;
+  return '<img class="iconimg" src="'+src+'" alt="">';}
 function isRaw(file){return /\.png$/i.test(file);}
 function iconFile(it){
   if(it.type==="secret") return "folder-green.png";
@@ -573,7 +574,7 @@ function finder(path){
       {n:"Read me.txt",t:"file"},{n:"Notes.txt",t:"file"}
     ];
     if(p==="apps")data=["safari","notes","calculator","games","terminal","mail","music","settings"].map(function(a){return {n:a+".app",t:"app",a:a};});
-    if(p==="projects")data=PROJECTS.map(function(x){return {n:x.title,t:"app",a:"project",id:x.id};});
+    if(p==="projects")data=PROJECTS.map(function(x){return {n:x.title,t:"app",a:"project",id:x.id,img:x.image};});
     if(p==="docs")data=[{n:"Read me.txt",t:"file"},{n:"Notes.txt",t:"file"}];
     if(p==="secret")data=[{n:"flag.txt",t:"file",a:"flag"},{n:"Kato — the answer.txt",t:"file"},{n:"Hidden notes.txt",t:"file"}];
     w.body.innerHTML='<div class="bar"><button id="fback" '+(hist.length?"":"disabled")+'>‹ Back</button>'+
@@ -581,7 +582,7 @@ function finder(path){
       '<div class="side"><b>Favorites</b><button data-go="home">Desktop</button>'+
       '<button data-go="apps">Applications</button><button data-go="docs">Documents</button>'+
       '<button data-go="projects">Projects</button></div><div class="files">'+
-      data.map(function(it,i){var f=it.t==="folder"?"folder.png":it.t==="app"?(APP_ICONS[it.a]||"apple.svg"):"file.svg";
+      data.map(function(it,i){var f=it.img||(it.t==="folder"?"folder.png":it.t==="app"?(APP_ICONS[it.a]||"apple.svg"):"file.svg");
         return '<button class="fileitem '+it.t+'" data-i="'+i+'">'+glyphBox(f,"span")+it.n+'</button>';}).join("")+
       '</div></div>';
     w.titleEl.textContent="Finder — "+p;
@@ -594,7 +595,7 @@ function finder(path){
           if(it.p==="secret"){openSecretLock();return;}
           hist.push(p);nav(it.p);
         }
-        else if(it.a==="project")toast("Open the full project from the portfolio shelf");
+        else if(it.a==="project")projectWin(it.id);
         else launch(it.a||"notes");
       });
     });
@@ -886,6 +887,18 @@ function trashWin(){
     if(e)e.addEventListener("click",function(){save(TRASH_KEY,[]);render();toast("Trash emptied");});
   }
   render(); return w;
+}
+function projectWin(id){
+  var p=PROJECTS.filter(function(x){return x.id===id;})[0]; if(!p) return null;
+  var w=makeWin(p.title,560,520);
+  w.body.innerHTML='<div style="padding:18px">'+
+    '<img src="'+p.image+'" alt="" style="display:block;width:100%;height:280px;object-fit:cover;'+
+    'border-radius:12px;background:#18181d">'+
+    '<p class="kicker" style="margin:16px 0 8px">'+p.category+' / '+p.year+'</p>'+
+    '<h2 style="font-size:26px;font-weight:600;margin:0 0 14px">'+p.title+'</h2>'+
+    '<div class="actions"><button class="btn primary" id="pwopen">Open in portfolio</button></div></div>';
+  w.body.querySelector("#pwopen").addEventListener("click",function(){location.href="project.html#"+p.id;});
+  return w;
 }
 function flagWin(){
   if(apps.flag){focusWin(apps.flag);return apps.flag;}
