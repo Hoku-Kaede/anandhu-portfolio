@@ -2089,5 +2089,19 @@ requestAnimationFrame(frame);
   document.addEventListener('selectstart',function(e){if(!ok(e.target))e.preventDefault();});
   document.addEventListener('dragstart',function(e){if(!ok(e.target))e.preventDefault();});
 })();
+</script><script data-veil-reset>
+(function(){
+  function reset(){
+    ['page-veil','switch-wipe'].forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      if(el.getAnimations) el.getAnimations().forEach(function(a){a.cancel();});
+      el.classList.remove('run');
+      el.style.clipPath='circle(0px at 50% 50%)';
+    });
+  }
+  addEventListener('pageshow',reset);
+  addEventListener('popstate',reset);
+  reset();
+})();
 </script></body>
 </html>
